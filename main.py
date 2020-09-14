@@ -18,7 +18,7 @@ dab = firestore.Client()
 
 #findspark.init()
 
-#client = pymongo.MongoClient("mongodb+srv://DM-1:wow99LOL@cluster0.ntd2j.gcp.mongodb.net/<dbname>?retryWrites=true&w=majority")
+#client = pymongo.MongoClient("---")
 #cliente =
 #db = client.test
 # conn = sqlite3.connect('test.db')
