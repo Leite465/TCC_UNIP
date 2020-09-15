@@ -13,6 +13,7 @@ import json
 
 #findspark.init()
 
+#se conecta ao banco de dados
 #db2 = dataset.connect('sqlite:///hashtags.db')
 db = dataset.connect('sqlite:///tweets.db')
 
@@ -68,33 +69,41 @@ api = tweepy.API(auth)
 #        def on_exception(self, exception):
 #            print(exception)
 
+
 class AStreamListener(tweepy.StreamListener):
 
     def on_status(self, status):
+        #pega a hora
         now = datetime.now()
+        #define a hora
         timestamp = datetime.timestamp(now)
+        #seleciona a tabela do banco de dados
         table = db['tweets']
+        #insere os valores(status=o tweet e timestamp=hora da postagem)
         table.insert(dict(status=status.text, timestamp=timestamp))
+        #printa na tela os tweets
         print(status.text)
-
+        #exception para caso de erro não encerrar a stream
         def on_error(self, status_code):
             print(status_code)
             return True  # Don't kill the stream
-
+        # exception para caso de perca de internet não encerrar a stream
         def on_timeout(self):
             print('timeout')
             return True  # Don't kill the stream
-
+        #exception genérico
         def on_exception(self, exception):
             print(exception)
 
-
-
         #print(status.text)
 
+#cria um listener usando o metodo da classe AStreamListener
 myStreamListener = AStreamListener()
+#usa do comando de streaming da API tweepy com o metodo definido na linha
+# anterior e autenticado com as chaves providas no .env
 myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
 #myStream = tweepy.streaming.Stream(auth, CustomStreamListener())
+#define o filtro para coleta de informação
 myStream.filter(track=stopwords, is_async=True)
 
 #cria o listener
