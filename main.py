@@ -6,24 +6,15 @@ from datetime import datetime
 import dataset
 import re
 import sqlite3
-#from pymongo import mongo_client
 import json
 #import pyspark
 #import findspark
 #import hbase
-from google.cloud import firestore
-
-dab = firestore.Client()
-#idb = 0
 
 #findspark.init()
 
-#client = pymongo.MongoClient("---")
-#cliente =
-#db = client.test
-# conn = sqlite3.connect('test.db')
 #db2 = dataset.connect('sqlite:///hashtags.db')
-#db = dataset.connect('sqlite:///tweets.db')
+db = dataset.connect('sqlite:///tweets.db')
 
 #carrega o arquivo .env
 dotenv.load_dotenv()
@@ -82,13 +73,8 @@ class AStreamListener(tweepy.StreamListener):
     def on_status(self, status):
         now = datetime.now()
         timestamp = datetime.timestamp(now)
-        fsdb = dab.collection('tweets').document()
-        fsdb.set({
-            u'text': status.text,
-            u'timestamp': timestamp
-        })
-        #table = db['tweets']
-        #table.insert(dict(status=status.text, timestamp=timestamp))
+        table = db['tweets']
+        table.insert(dict(status=status.text, timestamp=timestamp))
         print(status.text)
 
         def on_error(self, status_code):
