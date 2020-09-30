@@ -7,20 +7,13 @@ import dataset
 import re
 import sqlite3
 import json
-#import pyspark
-#import findspark
-#import hbase
-
-#findspark.init()
+#import pandas
 
 #se conecta ao banco de dados
-#db2 = dataset.connect('sqlite:///hashtags.db')
-db = dataset.connect('sqlite:///tweets.db')
+db = dataset.connect('sqlite:///consolesh.db')
 
 #carrega o arquivo .env
 dotenv.load_dotenv()
-
-
 
 #arquivo com as keywords para o comando track
 stopwords_file = 'stopwords.txt'
@@ -30,44 +23,43 @@ with open(stopwords_file,'r') as f:
         stopwords.append(line.strip())
 
 #coleta a informação do arquivo
+#Twitter
 consumer_key = os.environ['CONSUMER_API_KEY']
 consumer_secret = os.environ['CONSUMER_API_SECRET_KEY']
 access_token = os.environ['ACCESS_TOKEN']
 access_token_secret = os.environ['ACCESS_TOKEN_SECRET']
 
-#faz a autenticação
+#faz a autenticação no twitter
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 
 api = tweepy.API(auth)
 
-
 #cria a classe de streaming com uma função pra printar
-#class MyStreamListener(tweepy.StreamListener):
-#class CustomStreamListener(tweepy.StreamListener):
+class CustomStreamListener(tweepy.StreamListener):
 
-#    def on_status(self, status):
-#        words = status.text.replace('\n', ' ')
-#        words = words.split(' ')
-#        hashtags = [w for w in words if '#' in w]
-#        hashtags = [re.sub(r'[^\w\s]', '', h) for h in hashtags]
-#        for h in hashtags:
-#            now = datetime.now()
-#            timestamp = datetime.timestamp(now)
-#            table = db['hashtags']
-#            table.insert(dict(word=h, timestamp=timestamp))
-#            print(status.text)
+    def on_status(self, status):
+        words = status.text.replace('\n', ' ')
+        words = words.split(' ')
+        hashtags = [w for w in words if '#' in w]
+        hashtags = [re.sub(r'[^\w\s]', '', h) for h in hashtags]
+        for h in hashtags:
+            now = datetime.now()
+            timestamp = datetime.timestamp(now)
+            table = db['consolesh']
+            table.insert(dict(word=h, timestamp=timestamp))
+            print(status.text)
 
- #       def on_error(self, status_code):
- #           print(status_code)
- #           return True  # Don't kill the stream
+        def on_error(self, status_code):
+            print(status_code)
+            return True  # Don't kill the stream
 
-#       def on_timeout(self):
-#            print('timeout')
-#            return True  # Don't kill the stream
+        def on_timeout(self):
+            print('timeout')
+            return True  # Don't kill the stream
 
-#        def on_exception(self, exception):
-#            print(exception)
+        def on_exception(self, exception):
+            print(exception)
 
 
 class AStreamListener(tweepy.StreamListener):
@@ -78,7 +70,7 @@ class AStreamListener(tweepy.StreamListener):
         #define a hora
         timestamp = datetime.timestamp(now)
         #seleciona a tabela do banco de dados
-        table = db['tweets']
+        table = db['consoles']
         #insere os valores(status=o tweet e timestamp=hora da postagem)
         table.insert(dict(status=status.text, timestamp=timestamp))
         #printa na tela os tweets
@@ -98,7 +90,7 @@ class AStreamListener(tweepy.StreamListener):
         #print(status.text)
 
 #cria um listener usando o metodo da classe AStreamListener
-myStreamListener = AStreamListener()
+myStreamListener = CustomStreamListener()
 #usa do comando de streaming da API tweepy com o metodo definido na linha
 # anterior e autenticado com as chaves providas no .env
 myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
