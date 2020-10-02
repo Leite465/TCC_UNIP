@@ -8,6 +8,7 @@ import re
 import sqlite3
 import json
 #import pandas
+#import numpy
 
 #se conecta ao banco de dados
 db = dataset.connect('sqlite:///consolesh.db')
