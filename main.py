@@ -50,7 +50,7 @@ class CustomStreamListener(tweepy.StreamListener):
             timestamp = datetime.timestamp(now)
             table = db['consolesh']
             table.insert(dict(word=h, timestamp=timestamp))
-            with open('consoles.txt', 'a') as xx:
+            with open('consoles.csv', 'a', encoding='utf-8', errors='replace') as xx:
                 writer = csv.writer(xx)
                 writer.writerow([h.encode('utf-8'), status.text.encode('utf-8'), timestamp])
             print(status.text)
