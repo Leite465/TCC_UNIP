@@ -7,6 +7,7 @@ import dataset
 import re
 import sqlite3
 import json
+import csv
 #import pandas
 #import numpy
 
@@ -49,6 +50,9 @@ class CustomStreamListener(tweepy.StreamListener):
             timestamp = datetime.timestamp(now)
             table = db['consolesh']
             table.insert(dict(word=h, timestamp=timestamp))
+            with open('consoles.txt', 'a') as xx:
+                writer = csv.writer(xx)
+                writer.writerow([h.encode('utf-8'), status.text.encode('utf-8'), timestamp])
             print(status.text)
 
         def on_error(self, status_code):
@@ -61,7 +65,6 @@ class CustomStreamListener(tweepy.StreamListener):
 
         def on_exception(self, exception):
             print(exception)
-
 
 class AStreamListener(tweepy.StreamListener):
 
