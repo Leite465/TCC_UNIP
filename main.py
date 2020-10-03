@@ -12,7 +12,6 @@ import csv
 #import numpy
 
 #se conecta ao banco de dados
-db = dataset.connect('sqlite:///consolesh.db')
 
 #carrega o arquivo .env
 dotenv.load_dotenv()
@@ -48,8 +47,6 @@ class CustomStreamListener(tweepy.StreamListener):
         for h in hashtags:
             now = datetime.now()
             timestamp = datetime.timestamp(now)
-            table = db['consolesh']
-            table.insert(dict(word=h, timestamp=timestamp))
             with open('consoles.csv', 'a', encoding='utf-8', errors='replace') as xx:
                 writer = csv.writer(xx)
                 writer.writerow([h.encode('utf-8'), status.text.encode('utf-8'), timestamp])
