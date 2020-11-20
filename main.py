@@ -5,8 +5,6 @@ import dotenv
 from datetime import datetime
 import dataset
 import re
-import sqlite3
-import json
 import csv
 #import pandas
 #import numpy
@@ -47,9 +45,9 @@ class CustomStreamListener(tweepy.StreamListener):
         for h in hashtags:
             now = datetime.now()
             timestamp = datetime.timestamp(now)
-            with open('consoles.csv', 'a', encoding='utf-8', errors='replace') as xx:
+            with open('consolesh.csv', 'a', encoding='utf-8', errors='replace') as xx:
                 writer = csv.writer(xx)
-                writer.writerow([h.encode('utf-8'), status.text.encode('utf-8'), timestamp])
+                writer.writerow([h.encode('utf-8')])
             print(status.text)
 
         def on_error(self, status_code):
